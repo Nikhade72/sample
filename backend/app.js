@@ -52,6 +52,29 @@ app.delete('/api/tasks/:id', async (req,res) =>{
         res.status(400).json({error: 'Error deleting task'});
     }
 })
+app.put('/api/tasks/:id', async (req, res) => {
+    try {
+      const taskId = req.params.id;
+      const { completed } = req.body;
+  
+      // Update the task's completion status in the database
+      const updatedTask = await Task.findByIdAndUpdate(
+        taskId,
+        { completed },
+        { new: true }
+      );
+  
+      if (!updatedTask) {
+        return res.status(404).json({ error: 'Task not found' });
+      }
+  
+      res.json(updatedTask);
+    } catch (error) {
+      console.error('Error updating task completion status:', error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
+  
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT,()=>{
